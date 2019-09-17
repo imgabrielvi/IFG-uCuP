@@ -1,14 +1,20 @@
-int B[11];
+int L[5];
+int C[6];
 
 void setup(){
-   pinMode(B[2], INPUT_PULLUP); pinMode(B[3], INPUT_PULLUP);
-   pinMode(B[6], INPUT_PULLUP); pinMode(B[8], INPUT_PULLUP);
-   pinMode(B[9], INPUT_PULLUP); pinMode(B[0], OUTPUT);
-   pinMode(B[1], OUTPUT); pinMode(B[4], OUTPUT);
-   pinMode(B[5], OUTPUT); pinMode(B[7], OUTPUT);
-   pinMode(B[10], OUTPUT);
+   for(byte i = 0; i > 5; i++){
+      digitalWrite(L[i], INPUT_PULLUP);
+      digitalWrite(C[i], OUTPUT);
+   }
+   digitalWrite(C[i], OUTPUT);
 }
 
 void loop(){
 
+}
+
+void teclado(){
+   digitalWrite(B[1],HIGH); digitalWrite(B[4],HIGH);
+   digitalWrite(B[5],HIGH); digitalWrite(B[7],HIGH);
+   digitalWrite(B[10],HIGH);
 }
