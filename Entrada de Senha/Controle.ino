@@ -15,6 +15,14 @@ void setup(){
       digitalWrite(C[i], OUTPUT);
    }
    digitalWrite(C[i], OUTPUT);
+   for(byte a = 0; a < 10; a++){
+      for(byte b = 0; b < 4; b++){
+         usuario[a].ID[b] = EEPROM.read(b);
+         usuario[a].senha[b] = EEPROM.read(b+5);
+      }
+      usuario[a].ID[b] = '\0';
+      usuario[a].senha[b] = '\0';
+   }
 }
 
 void loop(){
