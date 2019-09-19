@@ -14,7 +14,6 @@ byte cont = 0, secao = 1, selo = 0,
      validar = 0, cadastrar = 0;
 bool confirma;
 
-
 bool validacao(){
    if(selo){
       if(usuario[selo - 1].senha == digito) return true;
@@ -32,6 +31,9 @@ bool validacao(){
       }
    }
 }
+
+void teclado(void); void numero(int valor);
+void comando(char valor1); void cadastro(void);
 
 void setup(){
    for(byte a = 0; a < 5; a++){
@@ -107,8 +109,8 @@ void numero(int valor){
    cont++;
 }
 
-void comando(char valor){
-   if(valor == '#'){
+void comando(char valor1){
+   if(valor1 == '#'){
        switch(secao){
            case 1:  validar++; secao++; break;
            case 2:  if(confirma) secao++;
@@ -121,7 +123,7 @@ void comando(char valor){
                     else digito = 0; break;
        }
    }
-   if(valor == '*'){
+   if(valor1 == '*'){
        switch(secao){
            case 1:  cadastrar++; secao++; break;
            default: digito = digito/10; break;
