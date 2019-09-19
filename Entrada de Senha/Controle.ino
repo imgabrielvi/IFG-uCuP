@@ -1,4 +1,5 @@
 #include <EEPROM.h>
+#define chave 9
 
 typedef struct{
     int ID, senha;
@@ -11,10 +12,10 @@ byte cont = 0, secao = 0;
 
 void setup(){
    for(byte a = 0; a < 5; a++){
-      digitalWrite(L[a], INPUT_PULLUP);
-      digitalWrite(C[a], OUTPUT);
+      pinMode(L[a], INPUT_PULLUP);
+      pinMode(C[a], OUTPUT);
    }
-   digitalWrite(C[5], OUTPUT);
+   pinMode(C[5], OUTPUT); pinMode(chave, OUTPUT); 
    for(byte b = 0; b < 10; b++){
       for(byte c = 0; c < 2; c++){
          usuario[b].ID = EEPROM.read((4*b)+c);
@@ -75,8 +76,7 @@ void teclado(){
 
 void numero(int valor){
    if(cont > 4) return;
-   digito = digito*10;
-   digito += valor;
+   digito = valor + digito*10;
    cont++;
 }
 
@@ -91,7 +91,8 @@ bool validacao(){
       else return false;
    }
    else{
-      for(byte e = 0; e < 10; e++){
+      byte e;
+      for(e = 0; e < 10; e++){
          if(usuario[e].ID == digito) break;
       }
       if(e == 10) return false;
@@ -99,4 +100,9 @@ bool validacao(){
          secao = e+1;
          return true;
       }
+   }
+}
+
+void cadastro(){
+    
 }
