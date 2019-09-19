@@ -8,7 +8,8 @@ typedef struct{
 int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
     C[6] = {/*Pinos, em ordem, das colunas do teclado.*/},
     digito = 0;
-byte cont = 0, secao = 0;
+byte cont = 0, secao = 1, selo = 0,
+     validar = 0, cadastrar = 0;
 
 void setup(){
    for(byte a = 0; a < 5; a++){
@@ -26,6 +27,10 @@ void setup(){
 
 void loop(){
    teclado();
+   if(validar){
+       confirma = validacao();
+   }
+   else if(cadastrar);
 }
 
 void teclado(){
@@ -81,13 +86,29 @@ void numero(int valor){
 }
 
 void comando(char valor){
-   if(valor == '#') digito = digito/10;
-   if(valor == '*');
+   if(valor == '#'){
+       switch(secao){
+           case 1:  validar++; secao++; break;
+           case 2:  if(confirma) secao++;
+                    else digito = 0; break;
+           case 3:  if(confirma) secao++;
+                    else digito = 0; break;
+           case 4:  if(confirma){
+                        secao++; digitalWrite(chave, HIGH);
+                    }
+                    else digito = 0; break;
+       }
+   }
+   if(valor == '*'){
+       switch(secao){
+           case 1:  cadastrar++; secao++; break;
+           default: digito = digito/10; break;
+       }
 }
 
 bool validacao(){
-   if(secao){
-      if(usuario[secao - 1].senha == digito) return true;
+   if(selo){
+      if(usuario[selo - 1].senha == digito) return true;
       else return false;
    }
    else{
@@ -97,7 +118,7 @@ bool validacao(){
       }
       if(e == 10) return false;
       else{
-         secao = e+1;
+         selo = e+1;
          return true;
       }
    }
