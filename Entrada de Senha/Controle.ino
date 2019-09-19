@@ -1,3 +1,9 @@
+#include <EEPROM.h>
+
+typedef struct{
+    char ID[4], senha [4];
+} Usuario usuario[10];
+
 int L[5] = {},
     C[6] = {},
     cont = 0;
