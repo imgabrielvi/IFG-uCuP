@@ -87,7 +87,8 @@ void comando(char valor){
 
 bool validacao(){
    if(secao){
-      if(usuario[secao - 1].senha == digito);
+      if(usuario[secao - 1].senha == digito) return true;
+      else return false;
    }
    else{
       for(byte e = 0; e < 10; e++){
