@@ -74,15 +74,12 @@ void teclado(){
 }
 
 void numero(int valor){
-   if(cont > 4){
-      digito = 0;
-      cont = 0;
-   }
+   if(cont > 4) return;
    digito = digito*10;
    digito += valor;
 }
 
 void comando(char valor){
-   if(valor == '#');
+   if(valor == '#') digito = digito/10;
    if(valor == '*');
 }
