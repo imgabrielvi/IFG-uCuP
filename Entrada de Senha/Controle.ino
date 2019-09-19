@@ -3,7 +3,9 @@
 
 typedef struct{
     int ID, senha;
-} Usuario usuario[10];
+} Usuario;
+
+Usuario usuario[10];
 
 int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
     C[6] = {/*Pinos, em ordem, das colunas do teclado.*/},
@@ -11,6 +13,25 @@ int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
 byte cont = 0, secao = 1, selo = 0,
      validar = 0, cadastrar = 0;
 bool confirma;
+
+
+bool validacao(){
+   if(selo){
+      if(usuario[selo - 1].senha == digito) return true;
+      else return false;
+   }
+   else{
+      byte e;
+      for(e = 0; e < 10; e++){
+         if(usuario[e].ID == digito) break;
+      }
+      if(e == 10) return false;
+      else{
+         selo = e+1;
+         return true;
+      }
+   }
+}
 
 void setup(){
    for(byte a = 0; a < 5; a++){
@@ -31,7 +52,7 @@ void loop(){
    if(validar){
        confirma = validacao();
    }
-   else if(cadastrar);
+   else if(cadastrar) cadastro();
 }
 
 void teclado(){
@@ -81,7 +102,7 @@ void teclado(){
 }
 
 void numero(int valor){
-   if(cont > 4) return;
+   if(cont = 4) return;
    digito = valor + digito*10;
    cont++;
 }
@@ -107,24 +128,26 @@ void comando(char valor){
        }
 }
 
-bool validacao(){
-   if(selo){
-      if(usuario[selo - 1].senha == digito) return true;
-      else return false;
-   }
-   else{
-      byte e;
-      for(e = 0; e < 10; e++){
-         if(usuario[e].ID == digito) break;
-      }
-      if(e == 10) return false;
-      else{
-         selo = e+1;
-         return true;
-      }
-   }
-}
-
 void cadastro(){
-    
+    byte f;
+    switch(secao){
+        case 2: for(f = 0; f < 10; f++){
+                    if(!usuario[f].ID) break;
+                }
+                if(f != 10 && cont >= 4){
+                    usuario[f].ID == digito;
+                    secao++; cont = 0;
+                } break;
+        case 3: if(cont >= 4){
+                    usuario[f].senha = digito; 
+                    secao++; cont = 0; 
+                } break;
+        case 4: if(cont >= 4 && usuario[f].senha == digito){
+                    secao = 1; cont = 0;
+                } 
+                else{
+                    usuario[f].senha = 0; secao--; cont = 0;
+                } break;
+                    
+    }
 }
