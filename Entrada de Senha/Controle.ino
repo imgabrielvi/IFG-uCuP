@@ -17,8 +17,8 @@ void setup(){
    digitalWrite(C[i], OUTPUT);
    for(byte a = 0; a < 10; a++){
       for(byte b = 0; b < 2; b++){
-         usuario[a].ID = EEPROM.read(b);
-         usuario[a].senha = EEPROM.read(b+2);
+         usuario[a].ID = EEPROM.read((4*a)+b);
+         usuario[a].senha = EEPROM.read((4*a)+b+2);
       }
    }
 }
