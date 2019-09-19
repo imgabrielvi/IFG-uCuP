@@ -4,11 +4,10 @@ typedef struct{
     int ID, senha;
 } Usuario usuario[10];
 
-int L[5] = {},
-    C[6] = {},
-    cont = 0,
-    digito;
-byte secao = 0;
+int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
+    C[6] = {/*Pinos, em ordem, das colunas do teclado.*/},
+    digito = 0;
+byte cont = 0, secao = 0;
 
 void setup(){
    for(byte a = 0; a < 5; a++){
