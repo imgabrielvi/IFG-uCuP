@@ -10,6 +10,7 @@ int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
     digito = 0;
 byte cont = 0, secao = 1, selo = 0,
      validar = 0, cadastrar = 0;
+bool confirma;
 
 void setup(){
    for(byte a = 0; a < 5; a++){
