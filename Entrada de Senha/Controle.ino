@@ -1,13 +1,13 @@
 #include <EEPROM.h>
 
 typedef struct{
-    char ID[4], senha [4];
+    int ID, senha;
 } Usuario usuario[10];
 
 int L[5] = {},
     C[6] = {},
-    cont = 0;
-char digito[4];
+    cont = 0,
+    digito;
 
 void setup(){
    for(byte i = 0; i < 5; i++){
@@ -16,12 +16,10 @@ void setup(){
    }
    digitalWrite(C[i], OUTPUT);
    for(byte a = 0; a < 10; a++){
-      for(byte b = 0; b < 4; b++){
-         usuario[a].ID[b] = EEPROM.read(b);
-         usuario[a].senha[b] = EEPROM.read(b+5);
+      for(byte b = 0; b < 2; b++){
+         usuario[a].ID = EEPROM.read(b);
+         usuario[a].senha = EEPROM.read(b+2);
       }
-      usuario[a].ID[b] = '\0';
-      usuario[a].senha[b] = '\0';
    }
 }
 
@@ -37,52 +35,54 @@ void teclado(){
       digitalWrite(C[a], LOW);
       if(digitalRead(L[0]) == LOW){
          switch (a){
-            case 0: numero('1'); break;
-            case 1: numero('2'); break;
-            case 2: numero('3'); break;
+            case 0: numero(1); break;
+            case 1: numero(2); break;
+            case 2: numero(3); break;
          }
          while(digitalRead(L[0]) == LOW);
       }
       if(digitalRead(L[1]) == LOW){
          switch (a){
-            case 0: numero('4'); break;
-            case 1: numero('5'); break;
-            case 2: numero('6'); break;
+            case 0: numero(4); break;
+            case 1: numero(5); break;
+            case 2: numero(6); break;
          }
          while(digitalRead(L[1]) == LOW);
       }
       if(digitalRead(L[2]) == LOW){
          switch (a){
-            case 0: numero('7'); break;
-            case 2: numero('9');break;
-            case 3: numero('8');break;
+            case 0: numero(7); break;
+            case 2: numero(9);break;
+            case 3: numero(8);break;
          }
          while(digitalRead(L[2]) == LOW);
       }
       if(digitalRead(L[3]) == LOW){
          switch (a){
-            case 3: numero('0'); break;
+            case 3: numero(0); break;
          }
          while(digitalRead(L[3]) == LOW);
       }
       if(digitalRead(L[4]) == LOW){
          switch (a){
-            case 4: numero('#'); break;
-            case 5: numero('*'); break;
+            case 4: comando('#'); break;
+            case 5: comando('*'); break;
          }
          while(digitalRead(L[4]) == LOW);
       }
    }
 }
 
-void numero(char valor){
+void numero(int valor){
    if(cont > 4){
-      limpar();
+      digito = 0;
       cont = 0;
    }
-   digito[cont] = valor;
+   digito = digito*10;
+   digito += valor;
 }
 
-void limpar(){
-   for(byte b = 0; b < 4; b++) digito[b] = '';
+void comando(char valor){
+   if(valor == '#');
+   if(valor == '*');
 }
