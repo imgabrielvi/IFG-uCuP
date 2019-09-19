@@ -77,6 +77,7 @@ void numero(int valor){
    if(cont > 4) return;
    digito = digito*10;
    digito += valor;
+   cont++;
 }
 
 void comando(char valor){
