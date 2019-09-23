@@ -1,5 +1,8 @@
 #include <EEPROM.h>
+#include <LiquidCrystal.h>
 #define chave 9
+
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
 typedef struct{
     int ID, senha;
@@ -12,7 +15,7 @@ int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
     digito = 0;
 byte cont = 0, secao = 1, selo = 0,
      validar = 0, cadastrar = 0;
-bool confirma;
+bool confirma, estado = LOW;
 
 bool validacao(){
    if(selo){
@@ -50,7 +53,7 @@ void setup(){
 }
 
 void loop(){
-   teclado();
+   teclado(); digitalWrite(chave, estado);
    if(validar){
        confirma = validacao();
    }
@@ -115,10 +118,9 @@ void comando(char valor1){
            case 1:  validar++; secao++; break;
            case 2:  if(confirma) secao++;
                     else digito = 0; break;
-           case 3:  if(confirma) secao++;
-                    else digito = 0; break;
-           case 4:  if(confirma){
-                        secao++; digitalWrite(chave, HIGH);
+           case 3:  if(confirma){
+                        secao++;
+                        estado = !estado;
                     }
                     else digito = 0; break;
        }
