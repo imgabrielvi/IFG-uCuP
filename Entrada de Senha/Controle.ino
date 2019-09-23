@@ -128,6 +128,7 @@ void comando(char valor1){
            case 1:  cadastrar++; secao++; break;
            default: digito = digito/10; break;
        }
+   }
 }
 
 void cadastro(){
