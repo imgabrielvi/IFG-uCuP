@@ -1,6 +1,8 @@
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
 #define chave 9
+#define LED_VD
+#define LED_VM
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 
@@ -13,6 +15,7 @@ Usuario usuario[10];
 int L[5] = {/*Pinos, em ordem, das linhas do teclado.*/},
     C[6] = {/*Pinos, em ordem, das colunas do teclado.*/},
     digito = 0;
+unsigned long tempo = millis();
 byte cont = 0, secao = 1, selo = 0,
      validar = 0, cadastrar = 0;
 bool confirma, estado = LOW;
@@ -39,6 +42,9 @@ void teclado(void); void numero(int valor);
 void comando(char valor1); void cadastro(void);
 
 void setup(){
+    tempo  = millis();
+    lcd.begin(16,2);
+    lcd.clear;
    for(byte a = 0; a < 5; a++){
       pinMode(L[a], INPUT_PULLUP);
       pinMode(C[a], OUTPUT);
@@ -53,11 +59,23 @@ void setup(){
 }
 
 void loop(){
-   teclado(); digitalWrite(chave, estado);
+   teclado();
    if(validar){
        confirma = validacao();
    }
    else if(cadastrar) cadastro();
+   sinaliza('*');
+}
+
+void sinaliza(int pin){
+    if(pin == '*'){
+        if(millis() - tempo > 1000){
+            digitalWrite(LED_VM, LOW);
+            digitalWrite(LED_VD, LOW);  
+        }
+    }
+    else digitalWrite(pin, HIGH);
+    lcd.write();
 }
 
 void teclado(){
@@ -119,10 +137,16 @@ void comando(char valor1){
            case 2:  if(confirma) secao++;
                     else digito = 0; break;
            case 3:  if(confirma){
-                        secao++;
-                        estado = !estado;
+                        secao = 1;
+                        sinaliza(LED_VD);
+                        tempo = millis();
                     }
-                    else digito = 0; break;
+                    else{
+                        digito = 0; 
+                        sinaliza(LED_VM);
+                        tempo = millis();
+                    }
+               break;
        }
    }
    if(valor1 == '*'){
