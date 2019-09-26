@@ -1,7 +1,7 @@
 #include <EEPROM.h>
 #include <LiquidCrystal.h>
-#define LED_VD 1
-#define LED_VM 0
+#define LED_VD 0
+#define LED_VM 1
 
 LiquidCrystal lcd(A1, A0, A2, A3, A4, A5);
 
@@ -47,12 +47,12 @@ void sinaliza(int pin); void tecladoserial(void);
 void setup(){
     tempo = millis(); tempo1 = millis();
     lcd.begin(16,2);
-    lcd.clear(); Serial.begin(9600);
+    lcd.clear(); //Serial.begin(9600);
    for(byte a = 0; a < 5; a++){
       pinMode(L[a], INPUT_PULLUP);
       pinMode(C[a], OUTPUT);
    }
-   pinMode(C[5], OUTPUT);
+   pinMode(C[5], OUTPUT); pinMode(LED_VM, OUTPUT); pinMode(LED_VD, OUTPUT);
    for(byte b = 0; b < 10; b++){
     usuario[b].ID = EEPROM.read((4*b));
     usuario[b].ID = EEPROM.read((4*b)+1) + (usuario[b].ID)*100;        
@@ -61,7 +61,25 @@ void setup(){
     Serial.print(usuario[b].ID); Serial.print(" - ");
     Serial.println(usuario[b].senha);
    }
+   digitalWrite(LED_VD, LOW); digitalWrite(LED_VM, LOW);
 }
+
+/*void salvar() {
+  Serial.println("Gravando...");
+  for(byte b = 0; b < 10; b++) {
+    EEPROM.put(4*b, usuario[b]);
+    Serial.print(usuario[b].ID); Serial.print(" --> ");
+    Serial.println(usuario[b].senha);
+   }
+  Usuario x;
+  Serial.println("Lendo...");
+  for(byte b = 0; b < 10; b++) {
+    EEPROM.get(4*b, x);
+    Serial.print(x.ID); Serial.print(" --> ");
+    Serial.println(x.senha);
+   }
+  delay(5000);
+}*/
 
 void salvar(){
   for(byte b = 0; b < 10; b++){
@@ -69,17 +87,11 @@ void salvar(){
     EEPROM.update(((4*b)+1), (usuario[b].ID)%100);
     EEPROM.update(((4*b)+2), (usuario[b].senha)/100);
     EEPROM.update(((4*b)+3), (usuario[b].senha)%100);
-    if(millis()-tempo1 > 1000){
-      if(b==9) tempo1 = millis();
-      Serial.print(usuario[b].ID); Serial.print(" - ");
-      Serial.println(usuario[b].senha); Serial.println();
-    }
    }
 }
 
 void loop(){
-   teclado();
-   confirma = validacao();  //Serial.println(confirma);
+   teclado();  //Serial.println(confirma);
    sinaliza('*'); salvar(); lcd.home();
    switch(secao){
      case 1: lcd.print("* - Cadastro."); lcd.setCursor(0,1);
@@ -170,10 +182,10 @@ void numero(int valor){
 void comando(char valor1){
    if(valor1 == '#'){ lcd.clear();
        switch(secao){
-           case 1:  validar++; secao++; digito = 0; selo = 0; cont = 0;break;
+           case 1:  validar++; secao++; digito = 0; selo = 0; cont = 0; break;
            case 2:  if(validar){
-                      if(confirma){
-                        secao++;
+                      if(validacao()){
+                        secao++; //sinaliza(LED_VD);
                         digito = 0; cont = 0;
                       }
                       else{
@@ -182,7 +194,7 @@ void comando(char valor1){
                       }
                     }
                     if(cadastrar){
-                      if(confirma){
+                      if(validacao()){
                         secao = 1; selo = 0; cont = 0;
                         digito = 0; sinaliza(LED_VM);
                       }
@@ -198,12 +210,13 @@ void comando(char valor1){
                       }
                     } break;
            case 3:  if(validar){
-                      if(confirma){
+                      if(validacao()){
                         secao = 1; cont = 0;
                         digito = 0;
+                        sinaliza(LED_VD);
                       }
                       else{
-                        secao = 1;
+                        //secao = 1;
                         digito = 0; cont = 0;
                         sinaliza(LED_VM);
                       }
@@ -212,7 +225,7 @@ void comando(char valor1){
                       senha1 = digito;
                       digito = 0; cont = 0; secao++;
                     } break;
-          case 4: if(digito == senha1){Serial.print("Senha correta");
+          case 4: if(digito == senha1){
                     secao = 1; cont = 0;
                     digito = 0;
                     selo = 0;
@@ -221,7 +234,7 @@ void comando(char valor1){
                     usuario[selo1 - 1].ID = ID1;
                     usuario[selo1 - 1].senha = senha1;
                 } 
-              else{                                           Serial.println("Senha incorreta"); Serial.print(ID1); Serial.print(" "); Serial.print(senha1); Serial.print(" "); Serial.println(digito);
+              else{                                           
                     secao = 1; cont = 0;
                     digito = 0;
                     selo = 0;
@@ -240,7 +253,7 @@ void comando(char valor1){
                       secao = 1;
                       validar = 0;
                       cadastrar = 0;
-                    }break;
+                    } break;
        }
    }
 }
