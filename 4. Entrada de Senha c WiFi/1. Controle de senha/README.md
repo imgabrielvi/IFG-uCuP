@@ -14,48 +14,30 @@ Entrega dia 24/09.
 
 		=========================================================
 		TECLADO NUMÉRICO:
-			[C5] B0 e [L4] B2 verificam '*';
-			[C4] B1 e [L4] B2 verificam '#';
-	
+			
 			Linhas:
-				[L0] B6 aciona linha de 
-				[L1] B8 aciona linha de 
-				[L2] B9 aciona linha de 
-				[L3] B3 aciona linha de 
-				[L4] B2 aciona linha de 
+				[L0] B6 aciona linha de '#', '0' e '*';
+				[L1] B8 aciona linha de '9', '8' e '7';
+				[L2] B9 aciona linha de '6', '5' e '4';
+				[L3] B3 aciona linha de '2';
+				[L4] B2 aciona linha de '3' e '1'.
 	
 			Colunas:
-				[C0] B5  aciona coluna de 
-				[C1] B7  aciona coluna de 
-				[C2] B10 aciona coluna de 
-				[C3] B4  aciona coluna de 
-				[C4] B0  aciona coluna de 
+				[C0] B5  aciona coluna de '#', '9' e '6';
+				[C1] B7  aciona coluna de '0' e '8';
+				[C2] B10 aciona coluna de '*', '7' e '4';
+				[C3] B4  aciona coluna de '5' e '2';
+				[C4] B1  aciona coluna de '1';
+				[C5] B0  aciona coluna de '3';
 		=========================================================
-		
-		=========================================================
-		TECLADO NUMÉRICO:
-			[C5] B0 e [L4] B2 verificam '*';
-			[C4] B1 e [L4] B2 verificam '#';
-	
-			Linhas:
-				[L0] B6 aciona linha de '1', '2' e '3';
-				[L1] B8 aciona linha de '4', '5' e '6';
-				[L2] B9 aciona linha de '7', '8' e '9';
-				[L3] B3 aciona linha de '0'.
-	
-			Colunas:
-				[C0] B5 aciona coluna de '1', '4' e '7';
-				[C1] B7 aciona coluna de '2' e '5';
-				[C2] B10 aciona coluna de '3', '6' e '9';
-				[C3] B4 aciona coluna de '8' e '0'.
-		=========================================================
+
 
 4.Matriz
 
-		[C4][L4]	[C3][L3]	[C5][L4]
+		[C4][L4] = {1}	[C3][L3] = {2}	[C5][L4] = {3}
 		
-		[C2][L2]	[C3][L2]	[C0][L2]
+		[C2][L2] = {4}	[C3][L2] = {5}	[C0][L2] = {6}
 		
-		[C2][L1]	[C1][L1]	[C0][L1]
+		[C2][L1] = {7}	[C1][L1] = {8}	[C0][L1] = {9}
 		
-		[C2][L0]	[C1][L0]	[C0][L0]
+		[C2][L0] = {*}	[C1][L0] = {0}	[C0][L0] = {#}
