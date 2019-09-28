@@ -44,11 +44,11 @@ void loop(){
         digitalWrite(display[i], LOW);
     }
     if(millis() - tempo > 150){
-        cont[3]++;                        	// unidade de segundos
+        cont[3]++;                        	  // unidade de segundos
         if(cont[3] > 9){
-            cont[3] = 0; cont[2]++;			// dezena de segundos
+            cont[3] = 0; cont[2]++;			      // dezena de segundos
             if(cont[2] > 5){
-                cont[2] = 0; cont[1]++;			// unidade de minutos
+                cont[2] = 0; cont[1]++;			  // unidade de minutos
                 if(cont[1] > 9){
                     cont[1] = 0; cont[0]++;		// dezena de minutos
                     if(cont[0] > 5){				
