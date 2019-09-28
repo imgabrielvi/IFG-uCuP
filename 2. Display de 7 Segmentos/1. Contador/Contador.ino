@@ -1,268 +1,97 @@
-#include <EEPROM.h>
-#include <LiquidCrystal.h>
-#define LED_VD 0
-#define LED_VM 1
+#define S_A 2
+#define S_B	3
+#define S_C 4
+#define S_D 5
+#define S_E 6
+#define S_F 7
+#define S_G 8
+#define P 9
+#define button1 11
+#define button2 10
+#define trans 100
 
-LiquidCrystal lcd(A1, A0, A2, A3, A4, A5);
+unsigned long tempo;
+int val;
+bool state = HIGH;
 
-typedef struct{
-    int ID, senha;
-} Usuario;
-
-Usuario usuario[10];
-
-int L[6] = {8, 10, 11, 5, 4/*Pinos, em ordem, das linhas do teclado.*/},
-    C[7] = {7, 9, 12, 6, 3, 2/*Pinos, em ordem, das colunas do teclado.*/},
-    digito = 0, ID1, senha1;
-unsigned long tempo, tempo1;
-byte cont = 0, secao = 1, selo = 0, selo1 = 0,
-     validar = 0, cadastrar = 0;
-bool confirma;
-
-bool validacao(){
-   if(selo){
-      if(usuario[selo - 1].senha == digito){
-        selo = 0;
-        return 1;
-      }
-      else return 0;
-   }
-   else{
-      byte e;
-      for(e = 0; e < 10; e++){
-         if(usuario[e].ID == digito) break;
-      }
-      if(e == 10) return 0;
-      else{
-         selo = e+1;
-         return 1;
-      }
-   }
+void liga(int pin){
+  digitalWrite(pin, !state);
 }
 
-void teclado(void); void numero(int valor);
-void comando(char valor1); void salvar(void);
-void sinaliza(int pin); void tecladoserial(void);
+void desliga(int pin){
+  digitalWrite(pin, state);
+}
+
+void escreve(char letra){
+  switch(letra){
+    case 'A': liga(S_A); liga(S_B); liga(S_C); desliga(S_D); liga(S_E); 
+              liga(S_F); liga(S_G); desliga(P); break;
+    case 'B': desliga(S_A); desliga(S_B); liga(S_C); liga(S_D); liga(S_E); 
+              liga(S_F); liga(S_G); desliga(P); break;
+    case 'C': desliga(S_A); desliga(S_B); desliga(S_C); liga(S_D); liga(S_E);
+              liga(S_F); desliga(S_G); desliga(P); break;
+    case 'D': desliga(S_A); liga(S_B); liga(S_C); liga(S_D); liga(S_E); 
+              desliga(S_F); liga(S_G); desliga(P); break;
+    case 'E': liga(S_A); desliga(S_B); desliga(S_C); liga(S_D); liga(S_E);
+              liga(S_F); liga(S_G); desliga(P); break;
+    case 'F': liga(S_A); desliga(S_B); desliga(S_C); desliga(S_D); liga(S_E); 
+              liga(S_F); liga(S_G); desliga(P); break;
+    case '0': liga(S_A); liga(S_B); liga(S_C); liga(S_D); liga(S_E); 
+              liga(S_F); desliga(S_G); desliga(P); break;
+    case '1': desliga(S_A); liga(S_B); liga(S_C); desliga(S_D); desliga(S_E);
+              desliga(S_F); desliga(S_G); desliga(P); break;
+    case '2': liga(S_A); liga(S_B); desliga(S_C); liga(S_D); liga(S_E);
+              desliga(S_F); liga(S_G); desliga(P); break;
+    case '3': liga(S_A); liga(S_B); liga(S_C); liga(S_D); desliga(S_E); 
+              desliga(S_F); liga(S_G); desliga(P); break;
+    case '4': desliga(S_A); liga(S_B); liga(S_C); desliga(S_D); desliga(S_E); 
+              liga(S_F); liga(S_G); desliga(P); break;
+    case '5': liga(S_A); desliga(S_B); liga(S_C); liga(S_D); desliga(S_E); 
+              liga(S_F); liga(S_G); desliga(P); break;
+    case '6': liga(S_A); desliga(S_B); liga(S_C); liga(S_D); liga(S_E); 
+              liga(S_F); liga(S_G); desliga(P); break;
+    case '7': liga(S_A); liga(S_B); liga(S_C); desliga(S_D); desliga(S_E);
+              desliga(S_F); desliga(S_G); desliga(P); break;
+    case '8': liga(S_A); liga(S_B); liga(S_C); liga(S_D); liga(S_E);
+              liga(S_F); liga(S_G); desliga(P); break;
+    case '9': liga(S_A); liga(S_B); liga(S_C); liga(S_D); desliga(S_E);
+              liga(S_F); liga(S_G); desliga(P); break;
+    case '+': desliga(S_A); desliga(S_B); desliga(S_C); desliga(S_D); desliga(S_E);
+              desliga(S_F); desliga(S_G); desliga(P); break;
+    case '-': liga(S_A); liga(S_B); liga(S_C); liga(S_D); liga(S_E);
+              liga(S_F); liga(S_G); liga(P); break;
+    case '#': break;
+    default:  if(val == 47){val = 57;}
+    		  if(val == 58){val = 48;} break;
+  }
+}
 
 void setup(){
-    tempo = millis(); tempo1 = millis();
-    lcd.begin(16,2);
-    lcd.clear(); //Serial.begin(9600);
-   for(byte a = 0; a < 5; a++){
-      pinMode(L[a], INPUT_PULLUP);
-      pinMode(C[a], OUTPUT);
-   }
-   pinMode(C[5], OUTPUT); pinMode(LED_VM, OUTPUT); pinMode(LED_VD, OUTPUT);
-   for(byte b = 0; b < 10; b++){
-    usuario[b].ID = EEPROM.read((4*b));
-    usuario[b].ID = EEPROM.read((4*b)+1) + (usuario[b].ID)*100;        
-    usuario[b].senha = EEPROM.read((4*b)+2);
-    usuario[b].senha = EEPROM.read((4*b)+3) + (usuario[b].senha)*100; 
-    Serial.print(usuario[b].ID); Serial.print(" - ");
-    Serial.println(usuario[b].senha);
-   }
-   digitalWrite(LED_VD, LOW); digitalWrite(LED_VM, LOW);
-}
-
-/*void salvar() {
-  Serial.println("Gravando...");
-  for(byte b = 0; b < 10; b++) {
-    EEPROM.put(4*b, usuario[b]);
-    Serial.print(usuario[b].ID); Serial.print(" --> ");
-    Serial.println(usuario[b].senha);
-   }
-  Usuario x;
-  Serial.println("Lendo...");
-  for(byte b = 0; b < 10; b++) {
-    EEPROM.get(4*b, x);
-    Serial.print(x.ID); Serial.print(" --> ");
-    Serial.println(x.senha);
-   }
-  delay(5000);
-}*/
-
-void salvar(){
-  for(byte b = 0; b < 10; b++){
-    EEPROM.update(((4*b)), (usuario[b].ID)/100);
-    EEPROM.update(((4*b)+1), (usuario[b].ID)%100);
-    EEPROM.update(((4*b)+2), (usuario[b].senha)/100);
-    EEPROM.update(((4*b)+3), (usuario[b].senha)%100);
-   }
+  for(int x=2; x<10; x++) pinMode(x, OUTPUT);
+  pinMode(button1, INPUT_PULLUP);
+  pinMode(button2, INPUT_PULLUP);
+  for(int x=0; x<3; x++){
+      escreve('+'); delay(trans);
+      escreve('-'); delay(trans);
+  }
+  tempo = millis();
+  val = 48;
 }
 
 void loop(){
-   teclado();  //Serial.println(confirma);
-   sinaliza('*'); salvar(); lcd.home();
-   switch(secao){
-     case 1: lcd.print("* - Cadastro."); lcd.setCursor(0,1);
-             lcd.print("# - Validacao."); break;
-     case 2: if(cadastrar) lcd.print("Cadastrar: "); 
-             else lcd.print("Validacao: ");
-             lcd.setCursor(0,1);
-             lcd.print("Digite ID: "); lcd.print(digito); 
-             lcd.print("     "); break;
-     case 3: if(cadastrar) lcd.print("Cadastrar: "); 
-             else lcd.print("Validacao: ");
-             lcd.setCursor(0,1);
-             lcd.print("Senha: "); lcd.print(digito); 
-             lcd.print("     "); break;
-     case 4: lcd.print("Confirmar senha:");
-             lcd.setCursor(0,1);
-             lcd.print("Senha: "); lcd.print(digito);
-             lcd.print("     "); break;
-   }
-   tecladoserial();
-}
-
-void sinaliza(int pin){
-    if(pin == '*'){
-        if((millis() - tempo) > 1000){
-            digitalWrite(LED_VM, LOW);
-            digitalWrite(LED_VD, LOW);
-        }
+    escreve(val);
+    int Button1 = digitalRead(button1);
+    int Button2 = digitalRead(button2);
+    if((millis() - tempo) > trans && Button1 == LOW && Button2 == HIGH){
+        val++;
+        tempo = millis();
     }
-    else{
-      digitalWrite(pin, HIGH);
-      tempo = millis();
+    if((millis() - tempo) > trans && Button1 == HIGH && Button2 == LOW){
+        val--;
+        tempo = millis();
     }
-}
-
-void teclado(){
-   for(byte d = 0; d < 6; d++){
-      digitalWrite(C[0], HIGH); digitalWrite(C[1], HIGH);
-      digitalWrite(C[2], HIGH); digitalWrite(C[3], HIGH);
-      digitalWrite(C[4], HIGH); digitalWrite(C[5], HIGH);
-      digitalWrite(C[d], LOW);
-      if(digitalRead(L[0]) == LOW){
-         switch (d){
-            case 0: comando('#'); break;
-            case 1: numero(0); break;
-            case 2: comando('*'); break;
-         }
-         while(digitalRead(L[0]) == LOW);
-      }
-      if(digitalRead(L[1]) == LOW){
-         switch (d){
-            case 0: numero(9); break;
-            case 1: numero(8); break;
-            case 2: numero(7); break;
-         }
-         while(digitalRead(L[1]) == LOW);
-      }
-      if(digitalRead(L[2]) == LOW){
-         switch (d){
-            case 0: numero(6); break;
-            case 2: numero(4);break;
-            case 3: numero(5);break;
-         }
-         while(digitalRead(L[2]) == LOW);
-      }
-      if(digitalRead(L[3]) == LOW){
-         switch (d){
-            case 3: numero(2); break;
-         }
-         while(digitalRead(L[3]) == LOW);
-      }
-      if(digitalRead(L[4]) == LOW){
-         switch (d){
-            case 4: numero(3); break;
-            case 5: numero(1); break;
-         }
-         while(digitalRead(L[4]) == LOW);
-      }
-   }
-}
-
-void numero(int valor){
-   if(cont == 4) return;
-   digito = valor + digito*10;
-   cont++;
-}
-
-void comando(char valor1){
-   if(valor1 == '#'){ lcd.clear();
-       switch(secao){
-           case 1:  validar++; secao++; digito = 0; selo = 0; cont = 0; break;
-           case 2:  if(validar){
-                      if(validacao()){
-                        secao++; //sinaliza(LED_VD);
-                        digito = 0; cont = 0;
-                      }
-                      else{
-                          digito = 0; cont = 0;
-                          sinaliza(LED_VM);
-                      }
-                    }
-                    if(cadastrar){
-                      if(validacao()){
-                        secao = 1; selo = 0; cont = 0;
-                        digito = 0; sinaliza(LED_VM);
-                      }
-                      else{
-                        selo = 0; cont = 0;
-                        int f = digito;
-                        digito = 2525;
-                        if(validacao()){
-                          ID1 = f; selo1 = selo;
-                          secao++;
-                        }
-                        digito = 0;
-                      }
-                    } break;
-           case 3:  if(validar){
-                      if(validacao()){
-                        secao = 1; cont = 0;
-                        digito = 0;
-                        sinaliza(LED_VD);
-                      }
-                      else{
-                        //secao = 1;
-                        digito = 0; cont = 0;
-                        sinaliza(LED_VM);
-                      }
-                    }
-                    if(cadastrar){
-                      senha1 = digito;
-                      digito = 0; cont = 0; secao++;
-                    } break;
-          case 4: if(digito == senha1){
-                    secao = 1; cont = 0;
-                    digito = 0;
-                    selo = 0;
-                    sinaliza(LED_VD);
-                    cadastrar = 0;
-                    usuario[selo1 - 1].ID = ID1;
-                    usuario[selo1 - 1].senha = senha1;
-                } 
-              else{                                           
-                    secao = 1; cont = 0;
-                    digito = 0;
-                    selo = 0;
-                    sinaliza(LED_VM);
-                        cadastrar = 0;
-                    } break;
-       }
-   }
-   if(valor1 == '*'){ lcd.clear();
-       switch(secao){
-           case 1:  cadastrar++; secao++; break;
-           default: if(digito){
-                      digito = digito/10; cont--;
-                    }
-                    else{
-                      secao = 1;
-                      validar = 0;
-                      cadastrar = 0;
-                    } break;
-       }
-   }
-}
-
-void tecladoserial(){
-  if(Serial.available()){
-    char val = Serial.read();
-    if(val == '#') comando('#');
-    if(val == '*') comando('*');
-    if(isDigit(val)) numero(val-48);
-  }
+    if((millis() - tempo) > trans && Button1 == LOW && Button2 == LOW){
+        val = 48;
+        tempo = millis();
+    }
 }
