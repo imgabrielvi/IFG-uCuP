@@ -1,8 +1,8 @@
 Entrega dia 24/09.
 
-1.Cadastro de usuário (10 usuários):
-
-		i. ID numérico 4 dígitos;
+1. Cadastro de usuário (10 usuários):
+		
+		 i. ID numérico 4 dígitos;
 		ii. Senha numérica de 4 dígitos.
 	
 2. Validação de usuário: 
@@ -12,6 +12,26 @@ Entrega dia 24/09.
 			
 3. Usar LCD e teclado numérico p/ apoio (interface).
 
+		=========================================================
+		TECLADO NUMÉRICO:
+			[C5] B0 e [L4] B2 verificam '*';
+			[C4] B1 e [L4] B2 verificam '#';
+	
+			Linhas:
+				[L0] B6 aciona linha de 
+				[L1] B8 aciona linha de 
+				[L2] B9 aciona linha de 
+				[L3] B3 aciona linha de 
+				[L4] B2 aciona linha de 
+	
+			Colunas:
+				[C0] B5  aciona coluna de 
+				[C1] B7  aciona coluna de 
+				[C2] B10 aciona coluna de 
+				[C3] B4  aciona coluna de 
+				[C4] B0  aciona coluna de 
+		=========================================================
+		
 		=========================================================
 		TECLADO NUMÉRICO:
 			[C5] B0 e [L4] B2 verificam '*';
